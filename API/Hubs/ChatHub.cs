@@ -14,6 +14,7 @@ namespace API.Hubs;
 [Authorize]
 public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : Hub
 {
+
     public static readonly ConcurrentDictionary<string, OnlineUserDto> onlineUsers = new();
 
 
@@ -36,12 +37,12 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
                 ConnectionId = connectionId,
                 UserName = userName,
                 ProfilePicture = currentUser!.ProfileImage,
-                FUllName = currentUser!.FullName
+                FullName = currentUser!.FullName
             };
 
             onlineUsers.TryAdd(userName, user);
 
-            await Clients.AllExcept(connectionId).SendAsync("Notify", currentUser);
+            await Clients.Others.SendAsync("Notify", currentUser);
         }
 
         if (!string.IsNullOrEmpty(recevierId))
@@ -54,6 +55,7 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
 
     public async Task LoadMessages(string recipientId, int pageNumber = 1)
     {
+
         int pageSize = 10;
         var username = Context.User!.Identity!.Name;
         var currentUser = await userManager.FindByNameAsync(username!);
@@ -91,8 +93,9 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
             }
         }
 
+        await Task.Delay(1000);
         await Clients.User(currentUser.Id)
-        .SendAsync("ReceieveMessageList", messages);
+        .SendAsync("ReceiveMessageList", messages);
     }
 
     public async Task SendMessage(MessageRequestDto message)
@@ -149,7 +152,7 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
         {
             Id = u.Id,
             UserName = u.UserName,
-            FUllName = u.FullName,
+            FullName = u.FullName,
             ProfilePicture = u.ProfileImage,
             IsOnline = onlineUsersSet.Contains(u.UserName!),
             UnreadCount = context.Messages.Count(x => x.ReceiverId == username && x.SenderId == u.Id && !x.IsRead)
