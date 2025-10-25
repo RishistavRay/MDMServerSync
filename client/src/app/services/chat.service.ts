@@ -14,7 +14,7 @@ import { environment } from '../../environments/environment';
 })
 export class ChatService {
   private authService = inject(AuthService);
-  private hubUrl = `${environment.baseUrl}/hubs/chat`;
+  private hubUrl = `${environment.baseUrl}/hubs/chat`; //This is in program.cs in backend
 
   readonly peerConnection = new RTCPeerConnection({
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],

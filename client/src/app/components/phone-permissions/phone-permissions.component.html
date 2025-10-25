@@ -1,0 +1,53 @@
+<div class="phone-frame">
+  <div class="screen">
+    <h2 class="title">Permissions</h2>
+
+    <div class="toggle-group">
+      <div class="toggle">
+        <label>Camera</label>
+        <label class="switch">
+          <input type="checkbox" [(ngModel)]="cameraEnabled" (ngModelChange)="markModified()" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle">
+        <label>Microphone</label>
+        <label class="switch">
+          <input type="checkbox" [(ngModel)]="micEnabled" (ngModelChange)="markModified()"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle">
+        <label>Location</label>
+        <label class="switch">
+          <input type="checkbox" [(ngModel)]="locationEnabled" (ngModelChange)="markModified()" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="version-section">
+      <label>Software Version</label>
+      <div class="version-control">
+        <input
+          type="text"
+          [value]="softwareVersion.toFixed(1)"
+          readonly
+          class="version-input"
+        />
+        <div class="buttons">
+          <button (click)="incrementVersion()">▲</button>
+          <button (click)="decrementVersion()">▼</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <button
+    class="home-button"
+    [class.active]="isModified"
+    (click)="sendMessage()"
+  ></button>
+</div>

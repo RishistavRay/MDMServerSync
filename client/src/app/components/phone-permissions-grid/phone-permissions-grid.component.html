@@ -1,0 +1,33 @@
+<div class="grid-container">
+  <div class="header-bar">
+    <button class="register-btn" (click)="openRegisterDialog()">Register Device</button>
+    <button class="register-btn" (click)="refreshPage()">Refresh</button>
+  </div>
+  <div class="grid-scroll-area">
+    <div
+      class="device-cell"
+      *ngFor="let device of devices;"
+    >
+      <h3 class="device-title">{{ device.id }}</h3>
+
+      <app-phone-permissions
+        [id]="device.id"
+        [cameraEnabled]="device.cameraEnabled"
+        [micEnabled]="device.micEnabled"
+        [locationEnabled]="device.locationEnabled"
+        [softwareVersion]="device.softwareVersion">
+      </app-phone-permissions>
+    </div>
+  </div>
+
+  <!-- Confirmation dialog -->
+  <div class="confirm-overlay" *ngIf="showConfirm">
+    <div class="confirm-box">
+      <p>Allow this site to register a new device?</p>
+      <div class="confirm-actions">
+        <button class="allow" (click)="confirmRegister()">Allow</button>
+        <button class="block" (click)="cancelRegister()">Block</button>
+      </div>
+    </div>
+  </div>
+</div>

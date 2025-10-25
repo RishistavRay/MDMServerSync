@@ -17,7 +17,7 @@ import { TypingIndicatorComponent } from '../typing-indicator/typing-indicator.c
     TitleCasePipe,
   ],
   templateUrl: './chat-sidebar.component.html',
-  styles: ``,
+  styleUrls: ['chat-sidebar.component.css'],
 })
 export class ChatSidebarComponent implements OnInit {
   authService = inject(AuthService);

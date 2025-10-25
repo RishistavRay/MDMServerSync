@@ -59,8 +59,6 @@ public static class AccountEndpoint
 
         }).DisableAntiforgery();
 
-
-
         group.MapPost("/login", async (UserManager<AppUser> userManager, TokenService tokenService, LoginDto dto) =>
         {
             if (dto is null)

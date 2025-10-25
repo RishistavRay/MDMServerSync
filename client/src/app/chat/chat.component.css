@@ -1,0 +1,59 @@
+/* Container holding everything */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 1.5rem; /* rounded-3xl equivalent */
+  overflow: hidden;
+}
+
+/* Main row with chat window + sidebars */
+.chat-main {
+  display: flex;
+  height: 100%;
+  justify-content: space-between;
+}
+
+/* Left Sidebar */
+.left-sidebar {
+  background-color: #ffffff; /* bg-white */
+  border-right: 1px solid #d1d5db; /* border-r equivalent */
+  flex: 0 0 10%; /* default width: 20% (md:w-1/5) */
+  /* CUSTOMIZE: change flex-basis to adjust width */
+}
+
+/* Chat Window */
+.chat-window {
+  flex: 1 1 auto; /* grow to fill remaining space */
+  min-width: 200px; /* prevent collapsing too much */
+  background-color: #dfe7f1; /* bg-[#dfe7f1] */
+  overflow-y: auto;
+  /* CUSTOMIZE: min-width controls minimum chat window size */
+}
+
+/* Right Sidebar */
+.right-sidebar {
+  background-color: #f9fafb; /* bg-gray-50 */
+  border-left: 1px solid #d1d5db; /* border-l */
+  flex: 0 0 70%; /* default width: 50% (md:w-1/2) */
+  /* CUSTOMIZE: change flex-basis to make right sidebar bigger or smaller */
+}
+
+/* Responsive visibility (mimic Tailwind md:hidden / md:block) */
+.mobile-hidden {
+  display: block;
+}
+
+.desktop-visible {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-hidden {
+    display: none;
+  }
+
+  .desktop-visible {
+    display: block;
+  }
+}

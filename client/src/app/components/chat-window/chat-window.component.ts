@@ -12,7 +12,7 @@ import { VideoChatComponent } from '../../video-chat/video-chat.component';
   selector: 'app-chat-window',
   imports: [TitleCasePipe, MatIconModule, FormsModule, ChatBoxComponent],
   templateUrl: './chat-window.component.html',
-  styles: ``,
+  styleUrls: ['./chat-window.component.css'], 
 })
 export class ChatWindowComponent {
   @ViewChild('chatBox') chatContainer?: ElementRef;

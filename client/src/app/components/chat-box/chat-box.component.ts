@@ -16,16 +16,22 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [MatProgressSpinner, DatePipe, MatIconModule],
   templateUrl: './chat-box.component.html',
   styles: [
-    `
+    `  
       .chat-box {
         scroll-behavior: smooth;
         overflow: hidden;
         padding: 10px;
         background-color: #f5f5f5;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        height: 70vh;
+        height: 90vh;
+        padding-bottom: 5vh;
         border-radius: 5px;
         overflow-y: scroll;
+
+        .chat-message {
+          width: 70%;
+          overflow-wrap: break-word;
+        }
       }
 
       .chat-box::-webkit-scrollbar {

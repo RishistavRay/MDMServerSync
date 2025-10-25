@@ -1,4 +1,4 @@
-<app-chat-sidebar class="bg-white border-r md:hidden" />
+<!-- <app-chat-sidebar class="bg-white border-r md:hidden" />
 <div class="flex rounded-3xl h-full justify-between">
     <app-chat-sidebar class="bg-white border-r hidden md:block w-1/2" />
     <div class="w-full">
@@ -7,4 +7,25 @@
     <div class="bg-gray-50 border-l hidden md:block md:w-1/2">
         <app-chat-right-sidebar />
     </div>
+</div> -->
+
+<div class="chat-container">
+  <!-- Left Sidebar (mobile hidden) -->
+  <app-chat-sidebar class="left-sidebar mobile-hidden"></app-chat-sidebar>
+
+  <!-- Main chat content -->
+  <div class="chat-main">
+    <!-- Left Sidebar (desktop) -->
+    <app-chat-sidebar class="left-sidebar desktop-visible"></app-chat-sidebar>
+
+    <!-- Chat Window -->
+    <div class="chat-window">
+      <app-chat-window></app-chat-window>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-sidebar desktop-visible">
+      <app-chat-right-sidebar></app-chat-right-sidebar>
+    </div>
+  </div>
 </div>

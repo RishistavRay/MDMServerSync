@@ -86,9 +86,10 @@ app.UseCors(x => x.AllowAnyHeader()
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-app.MapHub<ChatHub>("hubs/chat");
+app.MapHub<ChatHub>("hubs/chat"); //this is the hub url endpoint which will enable client to connect to this hub
 app.MapHub<VideChatHub>("hubs/video-chat");
 app.MapAccountEndpoint();
+app.MapDeviceRegistrationEndpoint();
 
 app.Run();
 
