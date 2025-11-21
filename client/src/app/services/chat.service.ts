@@ -14,7 +14,7 @@ import { environment } from '../../environments/environment';
 })
 export class ChatService {
   private authService = inject(AuthService);
-  private hubUrl = `${environment.baseUrl}/hubs/chat`; //This is in program.cs in backend
+  private hubUrl = `${environment.baseUrl}/hubs/chat`;
 
   readonly peerConnection = new RTCPeerConnection({
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
@@ -120,7 +120,7 @@ export class ChatService {
     }
   }
 
-  sendMessage(message: string) {
+  sendMessage(message: string) { //I am giving the function name and the parameters so that backend can call its sendMessage method.
     this.chatMessages.update((messages) => [
       ...messages,
       {
@@ -134,7 +134,7 @@ export class ChatService {
     ]);
 
     this.hubConnection
-      ?.invoke('SendMessage', {
+      ?.invoke('SendMessage', { //this is where it calls the backend method
         receiverId: this.currentOpenedChat()?.id,
         content: message,
       })

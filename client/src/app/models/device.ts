@@ -9,7 +9,7 @@ export interface DeviceRegistration {
 }
 
 export interface DevicePermissions {
-  id: string;
+  deviceId: string;
   cameraEnabled: boolean;
   micEnabled: boolean;
   locationEnabled: boolean;
@@ -17,9 +17,9 @@ export interface DevicePermissions {
 }
 
 export interface DeviceUpdate {
-  DeviceId: string;
-  CameraEnabled?: boolean;
-  MicEnabled?: boolean;
-  LocationEnabled?: boolean;
-  SoftwareVersion?: number;
+  deviceId: string;
+  cameraEnabled?: boolean;
+  micEnabled?: boolean;
+  locationEnabled?: boolean;
+  softwareVersion?: number;
 }

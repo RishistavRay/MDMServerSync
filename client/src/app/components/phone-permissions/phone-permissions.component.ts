@@ -1,10 +1,8 @@
 import { Component, ElementRef, inject, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChatService } from '../../services/chat.service';
-import { VideoChatService } from '../../services/video-chat.service';
-import { AuthService } from '../../services/auth.service';
-import { DevicePermissions, DeviceUpdate } from '../../models/device';
+import { DeviceUpdate } from '../../models/device';
 import { DeviceService } from '../../services/device.service';
+import { RedisHubService } from '../../services/RedisHubService.service';
 
 @Component({
   selector: 'app-phone-permissions',
@@ -22,26 +20,24 @@ export class PhonePermissionsComponent {
     @Input() softwareVersion!: number;
     @Input() id!: string;
 
-    private _chatService = inject(ChatService);
+    private _redisHubService = inject(RedisHubService);
     private _latestState: DeviceUpdate = {
-      DeviceId: '',
-      CameraEnabled: false,
-      MicEnabled: false,
-      LocationEnabled: false,
-      SoftwareVersion: 0
+      deviceId: '',
+      cameraEnabled: false,
+      micEnabled: false,
+      locationEnabled: false,
+      softwareVersion: 0
     }
     message: string = '';
     isModified: boolean = false;
 
-    constructor(private _deviceService: DeviceService) {}
-
     ngOnChanges() {
       this._latestState = {
-        DeviceId: this.id,
-        CameraEnabled: this.cameraEnabled,
-        MicEnabled: this.micEnabled,
-        LocationEnabled: this.locationEnabled,
-        SoftwareVersion: this.softwareVersion
+        deviceId: this.id,
+        cameraEnabled: this.cameraEnabled,
+        micEnabled: this.micEnabled,
+        locationEnabled: this.locationEnabled,
+        softwareVersion: this.softwareVersion
       };
     
     }
@@ -52,44 +48,24 @@ export class PhonePermissionsComponent {
     }
 
     sendMessage() {
-        // Build the payload from the component’s data
         const currentState: DeviceUpdate= {
-            DeviceId: this.id,
-            CameraEnabled: this.cameraEnabled,
-            MicEnabled: this.micEnabled,
-            LocationEnabled: this.locationEnabled,
-            SoftwareVersion: this.softwareVersion
+            deviceId: this.id,
+            cameraEnabled: this.cameraEnabled,
+            micEnabled: this.micEnabled,
+            locationEnabled: this.locationEnabled,
+            softwareVersion: this.softwareVersion
         };
 
         const delta: Partial<DeviceUpdate> = {};
-        delta['DeviceId'] = currentState.DeviceId;
+        delta['deviceId'] = currentState.deviceId;
         for (const key in currentState) {
             const deltaKey = key as keyof DeviceUpdate;
             if (currentState[deltaKey] !== this._latestState[deltaKey]) {
                 delta[deltaKey] = currentState[deltaKey] as any;
             }
         }
-
-        // Convert to JSON string before sending
-        const jsonMessage = JSON.stringify(delta);
-
-        // Send via your chat service
-        this._deviceService.updateDevice(delta).subscribe({
-          next: (res) => {
-            this._chatService.sendMessage("tried to send " +jsonMessage);
-            if (res.success) {
-              //why do i never come here maybe because res is not really anything
-              this._chatService.sendMessage(jsonMessage);
-            }
-          },
-          error: (err) => {
-            this._chatService.sendMessage('Failed to update device permissions: ' + jsonMessage);
-            console.error('Failed to update device permissions', err);
-          }
-      });
-
-
-        // Optionally reset or scroll
+        
+        this._redisHubService.sendDelta(delta)
         this.scrollToBottom();
         this.isModified = false;
     }
@@ -118,6 +94,4 @@ export class PhonePermissionsComponent {
       this.markModified();
     }
   }
-
-
 }

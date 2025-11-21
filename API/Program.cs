@@ -1,4 +1,3 @@
-using System.Text;
 using API.Data;
 using API.Endpoints;
 using API.Hubs;
@@ -8,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +71,31 @@ builder.Services.AddAuthentication(opt =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect("localhost:6379")); //change to actual port number
 
+var multiplexer = ConnectionMultiplexer.Connect("localhost:6379");
+
+if (multiplexer.IsConnected)
+{
+    Console.WriteLine("Connected to Redis successfully!");
+}
+else
+{
+    Console.WriteLine("Failed to connect to Redis!");
+}
+
+builder.Services.AddSingleton<RedisPubSubService>();
+builder.Services.AddHostedService<RedisSubscriberService>();
+//builder.Services.AddHttpClient<IDeviceUpdateService, DeviceUpdateService>();
+
+builder.Services.AddHttpClient<IDeviceUpdateService, DeviceUpdateService>((sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = config["BackendApi:BaseUrl"];
+    Console.WriteLine($"Backend API Base URL: {baseUrl}");
+    client.BaseAddress = new Uri(baseUrl!);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -88,9 +113,10 @@ app.UseAuthorization();
 app.UseStaticFiles();
 app.MapHub<ChatHub>("hubs/chat"); //this is the hub url endpoint which will enable client to connect to this hub
 app.MapHub<VideChatHub>("hubs/video-chat");
+app.MapHub<DeltaPayloadHub>("hubs/delta-payload");
 app.MapAccountEndpoint();
 app.MapDeviceRegistrationEndpoint();
-
+Console.WriteLine("WHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
 app.Run();
 
 
