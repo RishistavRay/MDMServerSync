@@ -7,6 +7,7 @@ import { TitleCasePipe } from '@angular/common';
 import { ChatService } from '../../services/chat.service';
 import { User } from '../../models/user';
 import { TypingIndicatorComponent } from '../typing-indicator/typing-indicator.component';
+import { RedisHubService } from '../../services/RedisHubService.service';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -22,6 +23,7 @@ import { TypingIndicatorComponent } from '../typing-indicator/typing-indicator.c
 export class ChatSidebarComponent implements OnInit {
   authService = inject(AuthService);
   chatService = inject(ChatService);
+  redisHubService = inject(RedisHubService);
   router = inject(Router);
 
   logout() {
@@ -32,7 +34,7 @@ export class ChatSidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.chatService.startConnection(this.authService.getAccessToken!);
-    // this.chatService.onlineUsers();
+    this.redisHubService.startConnection(this.authService.getAccessToken!, this.authService.currentLoggedUser?.id);
   }
 
   openChatWindow(user: User) {

@@ -27,7 +27,7 @@ public class ChatHub(UserManager<AppUser> userManager, AppDbContext context) : H
     {
         var httpContext = Context.GetHttpContext(); //to understand the http request that initiated the connection
         var recevierId = httpContext?.Request.Query["senderId"].ToString();
-        var userName = Context.User!.Identity!.Name!;
+        var userName = Context.User!.Identity!.Name!; //getting the username of the connected user from the hub context
         var currentUser = await userManager.FindByNameAsync(userName);
         // returns AppUser object if found otherwise null
         var connectionId = Context.ConnectionId;

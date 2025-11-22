@@ -6,6 +6,7 @@ import { DevicePermissions, DeviceRegistration } from '../../models/device';
 import { AuthService } from '../../services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
 import { DeviceService } from '../../services/device.service';
+import { RedisHubService } from '../../services/RedisHubService.service';
 
 @Component({
   selector: 'app-phone-permissions-grid',
@@ -14,74 +15,75 @@ import { DeviceService } from '../../services/device.service';
   templateUrl: './phone-permissions-grid.component.html',
   styleUrls: ['./phone-permissions-grid.component.css'],
 })
-export class PhonePermissionsGridComponent implements OnInit {
+export class PhonePermissionsGridComponent {
     private _authService = inject(AuthService);
-    devices: DevicePermissions[] = [];
+    private _redisHubService = inject(RedisHubService);
+    devices = this._redisHubService.devices;
     showConfirm = false;
 
     constructor(private _deviceService: DeviceService) {}
-
-    ngOnInit() {
-        this.fetchDevices();
+    trackById(index: number, item: DevicePermissions): string {
+      return item.deviceId;
     }
 
-  trackById(index: number, item: DevicePermissions): string {
-    return item.id;
-  }
+    openRegisterDialog() {
+      this.showConfirm = true;
+    }
 
-  openRegisterDialog() {
-    this.showConfirm = true;
-  }
+    confirmRegister() {
+      const payload: DeviceRegistration = {
+        DeviceId: uuidv4(),
+        DeviceName: "Rishi's iPhone",
+        UserId: this._authService.currentLoggedUser!.id,
+        CameraEnabled: true,
+        MicEnabled: true,
+        LocationEnabled: true,
+        SoftwareVersion: 0.1,
+      };
 
-  confirmRegister() {
-    const payload: DeviceRegistration = {
-      DeviceId: uuidv4(),
-      DeviceName: "Rishi's iPhone",
-      UserId: this._authService.currentLoggedUser!.id,
-      CameraEnabled: true,
-      MicEnabled: true,
-      LocationEnabled: true,
-      SoftwareVersion: 0.1,
-    };
+      this._deviceService.registerDevice(payload).subscribe({
+        next: (res) => {
+          console.log('Device registered:', res);
+          this.fetchDevices();
+          this.showConfirm = false;
+        },
+        error: (err) => {
+          console.error('Failed to register device', err);
+          this.showConfirm = false;
+        },
+      });
+    }
 
-    this._deviceService.registerDevice(payload).subscribe({
-      next: (res) => {
-        console.log('Device registered:', res);
-        this.fetchDevices(); // refresh the grid
-        this.showConfirm = false;
-      },
-      error: (err) => {
-        console.error('Failed to register device', err);
-        this.showConfirm = false;
-      },
-    });
-  }
+    cancelRegister() {
+      this.showConfirm = false;
+    }
 
-  cancelRegister() {
-    this.showConfirm = false;
-  }
+    public refreshPage() {
+      this.fetchDevices();
+    }
 
-  public refreshPage() {
-    this.fetchDevices();
-  }
 
-  public fetchDevices() {
-      this._deviceService.getAllDevices().subscribe({
-        next: (res: any) => {
-          // If API returns res.data
-          
-          const apiDevices = res.data ?? res; 
-          this.devices = apiDevices.map((d: any) => ({
-            id: d.id,
+    public fetchDevices() {
+    this._deviceService.getAllDevices().subscribe({
+      next: (res: any) => {
+        const apiDevices = res.data ?? res; 
+
+        this.devices.set(
+          apiDevices.map((d: any) => ({
+            deviceId: d.id,
             cameraEnabled: d.cameraEnabled,
             micEnabled: d.micEnabled,
             locationEnabled: d.locationEnabled,
             softwareVersion: d.softwareVersion,
-          })) as DevicePermissions[];
-        },
-        error: (err) => {
-          console.error('Failed to fetch devices', err);
-        },
-      });
+          }))
+        );
+
+        console.log("Fetched devices in grid:", this.devices());
+      },
+      error: (err) => {
+        console.error('Failed to fetch devices', err);
+      },
+    });
   }
+
 }

@@ -6,12 +6,12 @@
   <div class="grid-scroll-area">
     <div
       class="device-cell"
-      *ngFor="let device of devices;"
+      *ngFor="let device of devices();"
     >
-      <h3 class="device-title">{{ device.id }}</h3>
+      <h3 class="device-title">{{ device.deviceId }}</h3>
 
       <app-phone-permissions
-        [id]="device.id"
+        [id]="device.deviceId"
         [cameraEnabled]="device.cameraEnabled"
         [micEnabled]="device.micEnabled"
         [locationEnabled]="device.locationEnabled"
